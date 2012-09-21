@@ -10,11 +10,71 @@
 	<body>
 		<div data-role="page">
 			<div data-role="header">
+				<h1> Radio Guyana International </h1>
 			<div>
 			<div data-role="content">
-				
+				<!--VosCast.com Flash Player-->
+					<script type="text/javascript" src="http://cdn.voscast.com/player/?key=9326f9ef6d64ac175068f3ce9234c9f2">
+					</script>
+				<!--End Player-->
+				<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <article>
+      <p>Finding your location: <span id="status">checking...</span></p>
+    </article>
+	<script>
+	function success(position) {
+		var s = document.querySelector('#status');
+  
+		if (s.className == 'success') {
+			// not sure why we're hitting this twice in FF, I think it's to do with a cached result coming back    
+			return;
+		}
+  
+		s.innerHTML = "found you!";
+		s.className = 'success';
+  
+		var mapcanvas = document.createElement('div');
+		mapcanvas.id = 'mapcanvas';
+		mapcanvas.style.height = '400px';
+		mapcanvas.style.width = '560px';
+    
+		document.querySelector('article').appendChild(mapcanvas);
+  
+		var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+		var myOptions = {
+		zoom: 15,
+		center: latlng,
+		mapTypeControl: false,
+		navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+  
+		var marker = new google.maps.Marker({
+			position: latlng, 
+			map: map, 
+			title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)"
+		});
+	}
+
+	function error(msg) {
+		var s = document.querySelector('#status');
+			s.innerHTML = typeof msg == 'string' ? msg : "failed";
+			s.className = 'fail';
+  
+		// console.log(arguments);
+		}
+
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(success, error);
+	} else {
+		error('not supported');
+	}
+
+	</script>
 			</div>
 			<div data-role="footer">
+				<p> &copy; <a href="http://www.radioguyana.fm" target="_blank">Radio Guyana International 2001 - 2012 </a></p>
 			</div>
 		</div>
 	</body>
